@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">Skaner Kreskowy</string>
+    <string name="press_the_button_to_scan_a_barcode">Wciśnij przycisk aby rozpocząć </string>
+    <string name="scan_button">Skanuj</string>
+    <string name="e_leclerc">E.Leclerc</string>
+    <string name="btn_login">Zaloguj</string>
+    <string name="password">Hasło</string>
+    <string name="login">Login</string>
+    <string name="image_with_brands_logo">image with brands logo</string>
+    <string name="name_surname">Imie Nazwisko</string>
+    <string name="next">dalej</string>
+    <string name="item_name">Nazwa towaru</string>
+    <string name="price">Cena</string>
+    <string name="wrong_price">Błędna cena</string>
+    <string name="item_converter">Przelicznik produktu</string>
+    <string name="wrong_converter">Błędny przelicznik</string>
+    <string name="not_enough_labels">Mało etykiet</string>
+    <string name="set_aisle">Ustaw alejkę</string>
+    <string name="set_expiration_date">Ustaw termin ważności</string>
+    <string name="barcode">Kod kreskowy</string>
+    <string name="no_item_in_database">Zeskanowany produkt nie znajduje się w bazie danych</string>
+    <string name="item_has_no_price">Zeskanowany produkt nie posiada ceny w bazie danych</string>
+    <string name="price_colon">cena:</string>
+    <string name="zl"> zl</string>
+    <string name="wrong_credentials">Niepoprawny login lub hasło</string>
+    <string name="wrong_login_format">Zły format loginu</string>
+    <string name="empty_login">Wprowadź login</string>
+    <string name="empty_password">Wprowadź hasło</string>
+    <string name="set_db_connection">Skonfiguruj połączenie z bazą danych</string>
+
+    <string name="database_ip">Adres IP</string>
+    <string name="database_port">Port</string>
+    <string name="database_name">Nazwa bazy danych</string>
+
+    <string name="save">Zapisz</string>
+    <string name="cancel">Anuluj</string>
+    <string name="scan_next">Zeskanuj następny produkt</string>
+    <string name="scan_first">Wybierz alejkę i rozpocznij skanowanie</string>
+
+
+</resources>
