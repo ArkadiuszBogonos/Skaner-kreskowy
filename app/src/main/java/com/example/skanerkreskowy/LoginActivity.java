@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -31,22 +34,22 @@ public class LoginActivity extends AppCompatActivity {
     private static String databaseIp, databasePort, databaseName, databaseLogin, databasePassword, databaseUrl;
     private boolean isConnectionSetCorrectly;
 
-
-
     private EditText mLoginEditText, mPasswordEditText;
+    private TextView mConfigureConnectionTextView;
+    private Button mLoginButton;
+    public ProgressBar mCircuralProgressBar;
 
     private String mLogin, mPassword;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mLoginEditText = findViewById(R.id.activity_login_et__login);
-        mPasswordEditText = findViewById(R.id.activity_login_et_password);
+        connectVariablesToGui();
 
         isConnectionSetCorrectly = false;
-
     }
 
     @Override
@@ -65,8 +68,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (isConnectionSetCorrectly) {
             validateCredentials();
-        }
-        else {
+        } else {
             Toast.makeText(this, "Bład połączenia z bazą. Sprawdź konfigurację.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -76,6 +78,48 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void setConnection() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        String dbInstance = "MYSQLSERVER";
+
+        databaseName = sharedPreferences.getString("dbName", null);
+        databaseLogin = sharedPreferences.getString("dbLogin", null);
+        databasePassword = sharedPreferences.getString("dbPassword", null);
+        databaseIp = sharedPreferences.getString("dbIp", null);
+        databasePort = sharedPreferences.getString("dbPort", null);
+
+        databaseUrl = "jdbc:jtds:sqlserver://" + databaseIp + ":" + databasePort + "/" + databaseName;
+        /*databaseUrl = "jdbc:jtds:sqlserver://" + databaseIp + ":" + databasePort + "/" + databaseName
+        +";instance="+ dbInstance;*/
+
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        try {
+            Class.forName(MS_SQL_SERVER_DRIVER);
+            connection = DriverManager.getConnection(databaseUrl, databaseLogin, databasePassword);
+            Log.d(TAG, "onCreate: connected to the database");
+            isConnectionSetCorrectly = true;
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            Log.e(TAG, "setConnection: class not found", e);
+            isConnectionSetCorrectly = false;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Log.e(TAG, "setConnection: sql exception", e);
+            isConnectionSetCorrectly = false;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "setConnection: unknown exception", e);
+            isConnectionSetCorrectly = false;
+        }
+    }
+
     private void validateCredentials() {
         String firstName, lastName;
 
@@ -83,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordEditText.setBackground(this.getDrawable(R.drawable.round_border));
 
         try {
-            if (mLogin.contains(".") && mLogin.substring(mLogin.indexOf('.')).length() > 1 ) {
+            if (mLogin.contains(".") && mLogin.substring(mLogin.indexOf('.')).length() > 1) {
                 firstName = mLogin.substring(0, mLogin.indexOf('.'));
                 firstName.toLowerCase();
                 lastName = mLogin.substring(mLogin.indexOf('.') + 1);
@@ -96,24 +140,19 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     if (mPasswordEditText.getText().toString().length() > 0) {
                         mLoginEditText.setText("");
-                        mPasswordEditText.setHint(R.string.empty_password);
-                        mPasswordEditText.setBackground(this.getDrawable(R.drawable.round_border_error_red));
-                    }
-                    else
-                    {
+                        mLoginEditText.setHint(R.string.wrong_credentials);
+                        mLoginEditText.setBackground(this.getDrawable(R.drawable.round_border_error_red));
+                    } else {
                         mPasswordEditText.setHint(R.string.empty_password);
                         mPasswordEditText.setBackground(this.getDrawable(R.drawable.round_border_error_red));
                     }
                 }
-            }
-            else {
-                if (mLoginEditText.getText().toString().length() > 0)
-                {
+            } else {
+                if (mLoginEditText.getText().toString().length() > 0) {
                     mLoginEditText.setText("");
                     mLoginEditText.setHint(R.string.wrong_login_format);
                     mLoginEditText.setBackground(this.getDrawable(R.drawable.round_border_error_red));
-                }
-                else {
+                } else {
                     mLoginEditText.setText("");
                     mLoginEditText.setHint(R.string.empty_login);
                     mLoginEditText.setBackground(this.getDrawable(R.drawable.round_border_error_red));
@@ -134,44 +173,6 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    private void setConnection() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-
-        try {
-            String databaseHost = "DESKTOP-HBCVILB";
-            String databaseInstance = "MYSQLSERVER";
-            databaseName = sharedPreferences.getString("dbName", null);
-            databaseLogin = sharedPreferences.getString("dbPassword", null);
-            databasePassword = sharedPreferences.getString("dbPassword", null);
-            databaseIp = sharedPreferences.getString("dbIp", null);
-            databasePort = sharedPreferences.getString("dbPort", null);
-            //databaseUrl = "jdbc:jtds:sqlserver://" + databaseIp + ":" + databasePort + "/" + databaseName;
-            databaseUrl = "jdbc:jtds:sqlserver://"+databaseHost+":"+databasePort+"/"+databaseName+
-                    ";instance="+databaseInstance+";user="+databaseLogin+";password="+databasePassword;
-        } catch (Exception e) {
-            isConnectionSetCorrectly = false;
-            e.printStackTrace();
-        }
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        try {
-            Class.forName(MS_SQL_SERVER_DRIVER);
-            connection = DriverManager.getConnection(databaseUrl, databaseLogin, databasePassword);
-            Log.d(TAG, "onCreate: connected to the database");
-            isConnectionSetCorrectly = true;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            Log.e(TAG, "onCreate: class not found", e);
-            isConnectionSetCorrectly = false;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Log.e(TAG, "onCreate: sql exception", e);
-            isConnectionSetCorrectly = false;
-        }
-    }
 
     private boolean isCorrect(String firstName, String lastName, String password) {
 
@@ -179,10 +180,6 @@ public class LoginActivity extends AppCompatActivity {
 
         try {
             statement = connection.createStatement();
-
-            Log.d(TAG, "isCorrect: SELECT * FROM uz__uzytkownik " +
-                    "WHERE uz_Imie='" + firstName + "' AND uz_Nazwisko='" + lastName + "' AND uz_Haslo='"
-                    + password + "';");
 
             ResultSet resultSet = statement.executeQuery("SELECT * FROM uz__uzytkownik " +
                     "WHERE uz_Imie='" + firstName + "' AND uz_Nazwisko='" + lastName + "' AND uz_Haslo='"
@@ -195,4 +192,14 @@ public class LoginActivity extends AppCompatActivity {
 
         return false;
     }
+
+    private void connectVariablesToGui() {
+        mLoginEditText = findViewById(R.id.activity_login_et__login);
+        mPasswordEditText = findViewById(R.id.activity_login_et_password);
+        mCircuralProgressBar = findViewById(R.id.circuralProgressBar);
+        mLoginButton = findViewById(R.id.activity_login_btn_login);
+        mConfigureConnectionTextView = findViewById(R.id.activity_login_tv_clicable_conf_db_conn);
+    }
+
 }
+

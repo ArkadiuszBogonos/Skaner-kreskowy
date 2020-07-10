@@ -377,10 +377,6 @@ public class MainActivity extends AppCompatActivity implements NumberPicker.OnVa
         String firstName = userFirstName.toLowerCase();
         String lastName = userLastName.toLowerCase();
 
-        Log.d(TAG, "isAdmin query: SELECT * FROM uz__uzytkownik " +
-                "WHERE uz_Imie='" + firstName + "' AND uz_Nazwisko='" + lastName
-                + "' AND uz_Administrator=1;");
-
         Statement statement = null;
 
         try {
