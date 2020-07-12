@@ -11,7 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ConfigureDbConnectionActivity extends AppCompatActivity {
 
-    private EditText mDbNameEditText, mLoginEditText, mPasswordEditText, mIpEditText, mPortEditText;
+    private EditText mDbNameEditText, mLoginEditText, mPasswordEditText, mIpEditText, mPortEditText,
+    mInstanceEditText;
 
     public static final String SHARED_PREF_DB_CREDENTIALS = "dbCredentials";
 
@@ -20,6 +21,8 @@ public class ConfigureDbConnectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_db_connection);
         connectVariablesToGui();
+        showCurrentConfiguration();
+
     }
 
     public void cancelButton(View view) {
@@ -33,13 +36,14 @@ public class ConfigureDbConnectionActivity extends AppCompatActivity {
         }
     }
 
-    //ToDo: make edittext data validation
+    //ToDo: make better edittext data validation
 
     public void saveData() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF_DB_CREDENTIALS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString("dbName", mDbNameEditText.getText().toString());
+        editor.putString("dbInstance", mInstanceEditText.getText().toString());
         editor.putString("dbLogin", mLoginEditText.getText().toString());
         editor.putString("dbPassword", mPasswordEditText.getText().toString());
         editor.putString("dbIp", mIpEditText.getText().toString());
@@ -59,6 +63,14 @@ public class ConfigureDbConnectionActivity extends AppCompatActivity {
         }
         else
             mDbNameEditText.setBackground(this.getDrawable(R.drawable.round_border));
+
+        // DB instance
+        if (mInstanceEditText.getText().toString().isEmpty()){
+            mInstanceEditText.setBackground(this.getDrawable(R.drawable.round_border_error_red));
+            isValid = false;
+        }
+        else
+            mInstanceEditText.setBackground(this.getDrawable(R.drawable.round_border));
 
         // Login
         if (mLoginEditText.getText().toString().isEmpty()){
@@ -95,8 +107,20 @@ public class ConfigureDbConnectionActivity extends AppCompatActivity {
         return isValid;
     }
 
+    private void showCurrentConfiguration() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF_DB_CREDENTIALS, MODE_PRIVATE);
+
+        mDbNameEditText.setText(sharedPreferences.getString("dbName", null));
+        mInstanceEditText.setText(sharedPreferences.getString("dbInstance", null));
+        mLoginEditText.setText(sharedPreferences.getString("dbLogin", null));
+        mPasswordEditText.setText(sharedPreferences.getString("dbPassword", null));
+        mIpEditText.setText(sharedPreferences.getString("dbIp", null));
+        mPortEditText.setText(sharedPreferences.getString("dbPort", null));
+    }
+
     private void connectVariablesToGui() {
         mDbNameEditText = findViewById(R.id.activity_set_db_connection_et_dbname);
+        mInstanceEditText = findViewById(R.id.activity_set_db_connection_et_dbinstance);
         mLoginEditText = findViewById(R.id.activity_set_db_connection_et_login);
         mPasswordEditText = findViewById(R.id.activity_set_db_connection_et_password);
         mIpEditText = findViewById(R.id.activity_set_db_connection_et_ip);

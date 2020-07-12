@@ -28,6 +28,7 @@
     <string name="empty_password">Wprowadź hasło</string>
     <string name="set_db_connection">Skonfiguruj połączenie z bazą danych</string>
 
+    <string name="database_instance">Instancja</string>
     <string name="database_ip">Adres IP</string>
     <string name="database_port">Port</string>
     <string name="database_name">Nazwa bazy danych</string>

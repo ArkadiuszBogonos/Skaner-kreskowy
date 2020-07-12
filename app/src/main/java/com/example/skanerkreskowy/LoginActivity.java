@@ -32,7 +32,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public static Connection connection = null;
     private static String databaseIp, databasePort, databaseName, databaseLogin, databasePassword, databaseUrl;
-    private boolean isConnectionSetCorrectly;
 
     private EditText mLoginEditText, mPasswordEditText;
     private TextView mConfigureConnectionTextView;
@@ -48,8 +47,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         connectVariablesToGui();
-
-        isConnectionSetCorrectly = false;
     }
 
     @Override
@@ -62,11 +59,12 @@ public class LoginActivity extends AppCompatActivity {
         mLogin = mLoginEditText.getText().toString();
         mPassword = mPasswordEditText.getText().toString();
 
-        if (!isConnectionSetCorrectly) {
-            setConnection();
+        if (DatabaseConnection.getConnection() == null) {
+            DatabaseConnection.setConnection(this);
         }
 
-        if (isConnectionSetCorrectly) {
+        if (DatabaseConnection.getConnection() != null) {
+            connection = DatabaseConnection.getConnection();
             validateCredentials();
         } else {
             Toast.makeText(this, "Bład połączenia z bazą. Sprawdź konfigurację.", Toast.LENGTH_SHORT).show();
@@ -78,48 +76,6 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void setConnection() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-
-        String dbInstance = "MYSQLSERVER";
-
-        databaseName = sharedPreferences.getString("dbName", null);
-        databaseLogin = sharedPreferences.getString("dbLogin", null);
-        databasePassword = sharedPreferences.getString("dbPassword", null);
-        databaseIp = sharedPreferences.getString("dbIp", null);
-        databasePort = sharedPreferences.getString("dbPort", null);
-
-        databaseUrl = "jdbc:jtds:sqlserver://" + databaseIp + ":" + databasePort + "/" + databaseName;
-        /*databaseUrl = "jdbc:jtds:sqlserver://" + databaseIp + ":" + databasePort + "/" + databaseName
-        +";instance="+ dbInstance;*/
-
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        try {
-            Class.forName(MS_SQL_SERVER_DRIVER);
-            connection = DriverManager.getConnection(databaseUrl, databaseLogin, databasePassword);
-            Log.d(TAG, "onCreate: connected to the database");
-            isConnectionSetCorrectly = true;
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            Log.e(TAG, "setConnection: class not found", e);
-            isConnectionSetCorrectly = false;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Log.e(TAG, "setConnection: sql exception", e);
-            isConnectionSetCorrectly = false;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "setConnection: unknown exception", e);
-            isConnectionSetCorrectly = false;
-        }
-    }
-
     private void validateCredentials() {
         String firstName, lastName;
 
@@ -129,9 +85,9 @@ public class LoginActivity extends AppCompatActivity {
         try {
             if (mLogin.contains(".") && mLogin.substring(mLogin.indexOf('.')).length() > 1) {
                 firstName = mLogin.substring(0, mLogin.indexOf('.'));
-                firstName.toLowerCase();
+                /*firstName.toLowerCase();*/
                 lastName = mLogin.substring(mLogin.indexOf('.') + 1);
-                lastName.toLowerCase();
+                /*lastName.toLowerCase();*/
 
                 Log.d(TAG, "first name: " + firstName + " last name: " + lastName);
 

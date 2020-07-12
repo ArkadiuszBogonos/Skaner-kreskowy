@@ -39,8 +39,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_set_db_connection_view_top"
-        app:layout_constraintVertical_bias="0.40">
+        app:layout_constraintTop_toBottomOf="@+id/activity_set_db_connection_view_top">
 
         <EditText
             android:id="@+id/activity_set_db_connection_et_dbname"
@@ -52,6 +51,22 @@
             android:drawablePadding="16dp"
             android:ems="10"
             android:hint="@string/database_name"
+            android:inputType="textPersonName"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/activity_set_db_connection_et_dbinstance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:autofillHints="text"
+            android:background="@drawable/round_border"
+            android:drawableStart="@drawable/ic_instance_24dp"
+            android:drawablePadding="16dp"
+            android:ems="10"
+            android:hint="@string/database_instance"
             android:inputType="textPersonName"
             android:padding="16dp"
             app:layout_constraintEnd_toEndOf="parent"
